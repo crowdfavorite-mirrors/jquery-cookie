@@ -1,48 +1,74 @@
-# jquery.cookie [![Build Status](https://travis-ci.org/carhartl/jquery-cookie.png?branch=master)](https://travis-ci.org/carhartl/jquery-cookie)
+# jquery.cookie [![Build Status](https://travis-ci.org/carhartl/jquery-cookie.png?branch=master)](https://travis-ci.org/carhartl/jquery-cookie) [![Code Climate](https://codeclimate.com/github/carhartl/jquery-cookie.png)](https://codeclimate.com/github/carhartl/jquery-cookie)
 
 A simple, lightweight jQuery plugin for reading, writing and deleting cookies.
+
+**If you're viewing this at https://github.com/carhartl/jquery-cookie, you're reading the documentation for the master branch.
+[View documentation for the latest release (1.4.1).](https://github.com/carhartl/jquery-cookie/tree/v1.4.1)**
+
+## Build Status Matrix
+
+[![Selenium Test Status](https://saucelabs.com/browser-matrix/jquery-cookie.svg)](https://saucelabs.com/u/jquery-cookie)
 
 ## Installation
 
 Include script *after* the jQuery library (unless you are packaging scripts somehow else):
 
-    <script src="/path/to/jquery.cookie.js"></script>
+```html
+<script src="/path/to/jquery.cookie.js"></script>
+```
 
 **Do not include the script directly from GitHub (http://raw.github.com/...).** The file is being served as text/plain and as such being blocked
 in Internet Explorer on Windows 7 for instance (because of the wrong MIME type). Bottom line: GitHub is not a CDN.
 
-The plugin can also be loaded as AMD module.
+The plugin can also be loaded as AMD or CommonJS module.
 
 ## Usage
 
 Create session cookie:
 
-    $.cookie('the_cookie', 'the_value');
+```javascript
+$.cookie('name', 'value');
+```
 
 Create expiring cookie, 7 days from then:
 
-    $.cookie('the_cookie', 'the_value', { expires: 7 });
+```javascript
+$.cookie('name', 'value', { expires: 7 });
+```
 
 Create expiring cookie, valid across entire site:
 
-    $.cookie('the_cookie', 'the_value', { expires: 7, path: '/' });
+```javascript
+$.cookie('name', 'value', { expires: 7, path: '/' });
+```
 
 Read cookie:
 
-    $.cookie('the_cookie'); // => "the_value"
-    $.cookie('not_existing'); // => undefined
+```javascript
+$.cookie('name'); // => "value"
+$.cookie('nothing'); // => undefined
+```
 
 Read all available cookies:
 
-    $.cookie(); // => { "the_cookie": "the_value", "...remaining": "cookies" }
+```javascript
+$.cookie(); // => { "name": "value" }
+```
 
 Delete cookie:
 
-    // Returns true when cookie was found, false when no cookie was found...
-    $.removeCookie('the_cookie');
+```javascript
+// Returns true when cookie was successfully deleted, otherwise false
+$.removeCookie('name'); // => true
+$.removeCookie('nothing'); // => false
 
-    // Same path as when the cookie was written...
-    $.removeCookie('the_cookie', { path: '/' });
+// Need to use the same attributes (path, domain) as what the cookie was written with
+$.cookie('name', 'value', { path: '/' });
+// This won't work!
+$.removeCookie('name'); // => false
+// This will work!
+$.removeCookie('name', { path: '/' }); // => true
+```
 
 *Note: when deleting a cookie, you must pass the exact same path, domain and secure options that were used to set the cookie, unless you're relying on the default options that is.*
 
@@ -52,13 +78,17 @@ Delete cookie:
 
 By default the cookie value is encoded/decoded when writing/reading, using `encodeURIComponent`/`decodeURIComponent`. Bypass this by setting raw to true:
 
-    $.cookie.raw = true;
+```javascript
+$.cookie.raw = true;
+```
 
 ### json
 
 Turn on automatic storage of JSON objects passed as the cookie value. Assumes `JSON.stringify` and `JSON.parse`:
 
-    $.cookie.json = true;
+```javascript
+$.cookie.json = true;
+```
 
 ## Cookie Options
 
@@ -96,26 +126,30 @@ Define the domain where the cookie is valid. Default: domain of page where the c
 
 If true, the cookie transmission requires a secure protocol (https). Default: `false`.
 
-## Tests
+## Converters
 
-Requires Node. Startup server:
+Provide a conversion function as optional last argument for reading, in order to change the cookie's value
+to a different representation on the fly.
 
-    $ node test/server.js
+Example for parsing a value into a number:
 
-Open in browser:
+```javascript
+$.cookie('foo', '42');
+$.cookie('foo', Number); // => 42
+```
 
-    $ open http://0.0.0.0:8124/test/index.html
+Dealing with cookies that have been encoded using `escape` (3rd party cookies):
 
-For quick *non cross-browser* testing use grunt, install grunt CLI and project dependencies as outlined in this guide: <http://gruntjs.com/getting-started>, then run:
-    
-    $ grunt
+```javascript
+$.cookie.raw = true;
+$.cookie('foo', unescape);
+```
 
-## Development
+You can pass an arbitrary conversion function.
 
-- Source hosted at [GitHub](https://github.com/carhartl/jquery-cookie)
-- Report issues, questions, feature requests on [GitHub Issues](https://github.com/carhartl/jquery-cookie/issues)
+## Contributing
 
-Pull requests are very welcome! Make sure your patches are well tested. Please create a topic branch for every separate change you make.
+Check out the [Contributing Guidelines](CONTRIBUTING.md)
 
 ## Authors
 
